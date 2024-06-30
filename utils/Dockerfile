@@ -1,6 +1,20 @@
+# Use Node.js LTS version
 FROM node:14-alpine
+
+# Set working directory
 WORKDIR /app
-COPY . .
+
+# Copy package.json and package-lock.json
+COPY package.json package-lock.json ./
+
+# Install dependencies
 RUN npm install
-CMD ["node", "server.js"]
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose the backend port
 EXPOSE 3000
+
+# Start the backend server
+CMD ["node", "server.js"]
