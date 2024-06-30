@@ -1,4 +1,4 @@
-FROM node:14-alpine
+FROM node:18.19-alpine
 WORKDIR /app
 COPY . .
 RUN npm install -g @angular/cli && npm install
