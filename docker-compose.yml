@@ -1,38 +1,45 @@
-version: '3'
+version: '3.8'
 services:
-  frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile.frontend
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
-
-  backend:
-    build:
-      context: .
-      dockerfile: Dockerfile.backend
-    ports:
-      - "3000:3000"
-    environment:
-      - DB_HOST=mysql
-      - DB_USER=root
-      - DB_PASSWORD=yourpassword
-      - DB_NAME=yourdbname
-    depends_on:
-      - mysql
-
   mysql:
     image: mysql:5.7
-    restart: always
+    container_name: mysql
     environment:
-      MYSQL_ROOT_PASSWORD: yourpassword
-      MYSQL_DATABASE: yourdbname
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: chatapp
+      MYSQL_USER: chatuser
+      MYSQL_PASSWORD: chatpassword
     ports:
       - "3306:3306"
     volumes:
-      - mysql-data:/var/lib/mysql
+      - mysql_data:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    environment:
+      DB_HOST: mysql
+      DB_USER: chatuser
+      DB_PASSWORD: chatpassword
+      DB_NAME: chatapp
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mysql
+    volumes:
+      - ./backend:/app
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
 
 volumes:
-  mysql-data:
+  mysql_data:
+
